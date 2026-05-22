@@ -91,8 +91,18 @@ export const getDriveDirectLink = (url: string): string => {
   else if (idMatch) fileId = idMatch[1];
   
   if (fileId) {
-    // Use our custom proxy server to stream audio smoothly and bypass Google Drive limits
-    return `/api/proxy-audio?id=${fileId}`;
+    // كشف إذا كان الموقع يعمل على خادم حقيقي أو محلي
+    const isLocalOrRender = 
+      window.location.hostname.includes('onrender.com') || 
+      window.location.hostname.includes('localhost') || 
+      window.location.hostname === '127.0.0.1';
+
+    if (isLocalOrRender) {
+      return `/api/proxy-audio?id=${fileId}`;
+    } else {
+      // بديل التشغيل المباشر من جوجل درايف (يعمل مع جيت هوب)
+      return `https://docs.google.com/uc?export=download&id=${fileId}`;
+    }
   }
   return url;
 };

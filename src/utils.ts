@@ -91,18 +91,8 @@ export const getDriveDirectLink = (url: string): string => {
   else if (idMatch) fileId = idMatch[1];
   
   if (fileId) {
-    // Detect if we are running on Cloud Run preview or standard localhost development server
-    const isLocalOrPreview = 
-      window.location.hostname.includes('run.app') || 
-      window.location.hostname.includes('localhost') || 
-      window.location.hostname === '127.0.0.1';
-
-    if (isLocalOrPreview) {
-      return `/api/proxy-audio?id=${fileId}`;
-    } else {
-      // Direct stream fallback for static hosting (Netlify, GitHub Pages, or bundled Mobile App)
-      return `https://docs.google.com/uc?export=download&id=${fileId}`;
-    }
+    // Use our custom proxy server to stream audio smoothly and bypass Google Drive limits
+    return `/api/proxy-audio?id=${fileId}`;
   }
   return url;
 };

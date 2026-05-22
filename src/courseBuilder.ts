@@ -20,7 +20,14 @@ export interface FlatQuestionRow {
 
 export const buildCourseData = (flatQuestions: FlatQuestionRow[]): Unit[] => {
   const course: Unit[] = [];
-  const completedLessons: string[] = JSON.parse(localStorage.getItem('completedLessons') || '[]');
+  let completedLessons: string[] = [];
+  try {
+    completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '[]');
+  } catch (e) {
+    completedLessons = [];
+  }
+  
+  if (!flatQuestions || !Array.isArray(flatQuestions)) return [];
   
   flatQuestions.forEach(row => {
     const unitTitle = row.unit || "وحدة عامة";

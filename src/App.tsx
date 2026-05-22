@@ -131,23 +131,27 @@ export default function App() {
       setGlobalAudioTime(0);
       setGlobalAudioDuration(0);
       setIsGlobalAudioPlaying(true);
+
+      // تشغيل الصوت بشكل متزامن داخل حدث النقر مباشرة 
+      // لتجنب حظر التشغيل التلقائي في أجهزة الموبايل وسفاري
+      if (globalAudioRef.current) {
+        const directUrl = getDriveDirectLink(url);
+        globalAudioRef.current.src = directUrl;
+        globalAudioRef.current.load();
+        const playPromise = globalAudioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err: any) => {
+            console.log('Playback error on url change:', err);
+            setIsGlobalAudioPlaying(false);
+          });
+        }
+      }
     }
   };
 
   useEffect(() => {
-    if (globalAudio && globalAudioRef.current) {
-      const directUrl = getDriveDirectLink(globalAudio.url);
-      globalAudioRef.current.src = directUrl;
-      globalAudioRef.current.load();
-      globalAudioRef.current.play()
-        .then(() => {
-          setIsGlobalAudioPlaying(true);
-        })
-        .catch((err: any) => {
-          console.log('Playback error on url change:', err);
-          setIsGlobalAudioPlaying(false);
-        });
-    } else if (!globalAudio && globalAudioRef.current) {
+    // تم نقل كود التشغيل إلى الأعلى ليحدث مباشرة مع النقر
+    if (!globalAudio && globalAudioRef.current) {
       globalAudioRef.current.pause();
       globalAudioRef.current.src = "";
     }
@@ -2189,7 +2193,6 @@ export default function App() {
       {/* Global Background Audio Handler (hidden HTML5 Audio tag) */}
       <audio
         ref={globalAudioRef}
-        src={globalAudio ? getDriveDirectLink(globalAudio.url) : undefined}
         onPlay={() => setIsGlobalAudioPlaying(true)}
         onPause={() => setIsGlobalAudioPlaying(false)}
         onEnded={() => {

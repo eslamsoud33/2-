@@ -101,7 +101,7 @@ export const getDriveDirectLink = (url: string): string => {
       return `/api/proxy-audio?id=${fileId}`;
     } else {
       // بديل التشغيل المباشر من جوجل درايف (يعمل مع جيت هوب)
-      return `https://drive.google.com/uc?export=download&id=${fileId}`;
+      return `https://docs.google.com/uc?export=download&id=${fileId}`;
     }
   }
   return url;
